@@ -1,28 +1,32 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+pub mod db_connection;
+pub mod handlers;
+pub mod models;
+pub mod schema;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
+#[macro_use]
+extern crate diesel;
+extern crate dotenv;
+extern crate serde;
+extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
+extern crate actix;
+extern crate actix_web;
+extern crate futures;
 
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
+use actix_web::{web, App, HttpServer};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    HttpServer::new(
+        || App::new()
+            .service(web::resource("/products")
+            .route(web::get()
+            .to(handlers::products::index))
+        ))
+        .bind(("127.0.0.1", 8080))
+        .unwrap()
+        .run()
+        .await
 }
