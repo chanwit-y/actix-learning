@@ -1,26 +1,20 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
+use actix_web::{web, guard, HttpServer, App, HttpResponse};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            .service(
+                web::scope("/")
+                    .guard(guard::Header("Host", "www"))    
+                    .route("", web::to(|| async {HttpResponse::Ok().body("www")}))
+            )
+            .service(
+                web::scope("/")
+                    .guard(guard::Header("Host", "user"))
+                    .route("", web::to(|| async {HttpResponse::Ok().body("user")} ))
+            )
+            .route("/", web::to(HttpResponse::Ok))
     })
     .bind(("127.0.0.1", 8080))?
     .run()
