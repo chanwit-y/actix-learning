@@ -19,14 +19,22 @@ use actix_web::{web, App, HttpServer};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(
-        || App::new()
-            .service(web::resource("/products")
-            .route(web::get()
-            .to(handlers::products::index))
-        ))
-        .bind(("127.0.0.1", 8080))
-        .unwrap()
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(
+                web::resource("/products")
+                    .route(web::get().to(handlers::products::index))
+                    .route(web::post().to(handlers::products::create)),
+            )
+            .service(
+                web::resource("/products/{id}")
+                .route(web::get().to(handlers::products::show))
+                .route(web::delete().to(handlers::products::destroy))
+                .route(web::patch().to(handlers::products::update))
+            )
+    })
+    .bind(("127.0.0.1", 8080))
+    .unwrap()
+    .run()
+    .await
 }
