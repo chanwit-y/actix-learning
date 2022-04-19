@@ -1,5 +1,4 @@
 use crate::schema::products;
-use std::vec::Vec;
 
 #[derive(Queryable, Serialize, Deserialize)]
 pub struct Product {
@@ -10,7 +9,7 @@ pub struct Product {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ProductList(pub Vec<Product>);
+pub struct ProductList(pub std::vec::Vec<Product>);
 
 #[derive(Insertable, Deserialize, AsChangeset)]
 #[table_name = "products"]
