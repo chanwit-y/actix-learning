@@ -1,4 +1,5 @@
 use crate::schema::products;
+use diesel::PgConnection;
 
 #[derive(Queryable, Serialize, Deserialize)]
 pub struct Product {
@@ -20,55 +21,55 @@ pub struct NewProduct {
 }
 
 impl Product {
-	pub fn find(id: &i32) -> Result<Product, diesel::result::Error> {
-		use crate::db_connection::establish_connetion;
+	pub fn find(id: &i32, connection: &PgConnection) -> Result<Product, diesel::result::Error> {
+		// use crate::db_connection::establish_connetion;
 		use diesel::QueryDsl;
 		use diesel::RunQueryDsl;
 
-		let connection = establish_connetion();
+		// let connection = establish_connetion();
 
-		products::table.find(id).first(&connection)
+		products::table.find(id).first(connection)
 	}
 
-	pub fn destroy(id: &i32) -> Result<(), diesel::result::Error> {
-		use crate::db_connection::establish_connetion;
+	pub fn destroy(id: &i32, connection: &PgConnection) -> Result<(), diesel::result::Error> {
+		// use crate::db_connection::establish_connetion;
 		use crate::schema::products::dsl;
 		use diesel::QueryDsl;
 		use diesel::RunQueryDsl;
 
-		let connection = establish_connetion();
+		// let connection = establish_connetion();
 
-		diesel::delete(dsl::products.find(&id)).execute(&connection)?;
+		diesel::delete(dsl::products.find(&id)).execute(connection)?;
 		Ok(())
 	}
 
-	pub fn update(id: &i32, new_product: &NewProduct) -> Result<(), diesel::result::Error> {
-		use crate::db_connection::establish_connetion;
+	pub fn update(id: &i32, new_product: &NewProduct, connection: &PgConnection) -> Result<(), diesel::result::Error> {
+		// use crate::db_connection::establish_connetion;
 		use crate::schema::products::dsl;
 		use diesel::QueryDsl;
 		use diesel::RunQueryDsl;
 
-		let connection = establish_connetion();
+		// let connection = establish_connetion();
 
 		diesel::update(dsl::products.find(id))
 			.set(new_product)
-			.execute(&connection)?;
+			.execute(connection)?;
 		Ok(())
 	}
 }
 
 impl ProductList {
-	pub fn list() -> Self {
-		use crate::db_connection::establish_connetion;
-		use crate::schema::products::dsl::*;
+	pub fn list(connection: &PgConnection) -> Self {
+		// use crate::db_connection::establish_connetion;
 		use diesel::QueryDsl;
 		use diesel::RunQueryDsl;
+		use crate::schema::products::dsl::*;
 
-		let connection = establish_connetion();
+		// let connection = establish_connetion();
 
 		let result = products
 			.limit(10)
-			.load::<Product>(&connection)
+			.load::<Product>(connection)
 			.expect("Error loading products");
 
 		ProductList(result)
@@ -76,13 +77,13 @@ impl ProductList {
 }
 
 impl NewProduct {
-	pub fn create(&self) -> Result<Product, diesel::result::Error> {
-		use crate::db_connection::establish_connetion;
+	pub fn create(&self, connection: &PgConnection) -> Result<Product, diesel::result::Error> {
+		// use crate::db_connection::establish_connetion;
 		use diesel::RunQueryDsl;
 
-		let connection = establish_connetion();
+		// let connection = establish_connetion();
 		diesel::insert_into(products::table)
 			.values(self)
-			.get_result(&connection)
+			.get_result(connection)
 	}
 }

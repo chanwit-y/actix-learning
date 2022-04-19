@@ -16,11 +16,13 @@ extern crate actix_web;
 extern crate futures;
 
 use actix_web::{web, App, HttpServer};
+use db_connection::establish_connetion;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
+            .data(establish_connetion())
             .service(
                 web::resource("/products")
                     .route(web::get().to(handlers::products::index))
@@ -28,9 +30,9 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::resource("/products/{id}")
-                .route(web::get().to(handlers::products::show))
-                .route(web::delete().to(handlers::products::destroy))
-                .route(web::patch().to(handlers::products::update))
+                    .route(web::get().to(handlers::products::show))
+                    .route(web::delete().to(handlers::products::destroy))
+                    .route(web::patch().to(handlers::products::update)),
             )
     })
     .bind(("127.0.0.1", 8080))
