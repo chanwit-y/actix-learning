@@ -1,13 +1,9 @@
+use crate::handlers::pg_pool_handler;
 use actix_web::{web, HttpRequest, HttpResponse};
 
-use crate::db_connection::{PgPool, PgPooledConnection};
+use crate::db_connection::PgPool;
 use crate::models::product::{NewProduct, Product, ProductList};
 
-fn pg_pool_handler(pool: web::Data<PgPool>) -> Result<PgPooledConnection, HttpResponse> {
-	pool
-	.get()
-	.map_err(|e| HttpResponse::InternalServerError().json(e.to_string()))
-}
 
 pub async fn index(_req: HttpRequest, pool: web::Data<PgPool>) -> HttpResponse {
 	let pg_pool = pg_pool_handler(pool).unwrap();
@@ -49,7 +45,11 @@ pub async fn destroy(id: web::Path<i32>, pool: web::Data<PgPool>) -> HttpRespons
 }
 
 //pub fn update(id: web::Path<i32>, new_product: web::Json<NewProduct>) -> Result<HttpResponse, HttpResponse> {
-pub async fn update(id: web::Path<i32>, new_product: web::Json<NewProduct>, pool: web::Data<PgPool>) -> HttpResponse {
+pub async fn update(
+	id: web::Path<i32>,
+	new_product: web::Json<NewProduct>,
+	pool: web::Data<PgPool>,
+) -> HttpResponse {
 	let pg_pool = pg_pool_handler(pool).unwrap();
 	Product::update(&id, &new_product, &pg_pool)
 		.map(|_| HttpResponse::Ok().json(()))

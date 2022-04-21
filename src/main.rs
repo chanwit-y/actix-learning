@@ -3,14 +3,18 @@ pub mod handlers;
 pub mod models;
 pub mod schema;
 pub mod errors;
+pub mod utils;
 
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
 extern crate serde;
 extern crate serde_json;
+extern crate jsonwebtoken as jwt;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate dotenv_codegen;
 
 extern crate actix;
 extern crate actix_web;
@@ -21,6 +25,7 @@ use db_connection::establish_connetion;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+
     HttpServer::new(|| {
         App::new()
             .data(establish_connetion())

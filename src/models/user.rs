@@ -30,6 +30,18 @@ pub struct RegisterUser {
 	pub password_confirmation: String,
 }
 
+impl RegisterUser {
+	pub fn validates(self) -> Result<RegisterUser, MyStoreError> {
+		if self.password == self.password_confirmation {
+			Ok(self)
+		} else {
+			Err(MyStoreError::PasswordNotMatch(
+				"Password and Password Confirmation does not match".to_string(),
+			))
+		}
+	}
+}
+
 use crate::errors::MyStoreError;
 use bcrypt::{hash, DEFAULT_COST};
 use chrono::Local;
