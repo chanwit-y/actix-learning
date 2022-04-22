@@ -20,4 +20,5 @@ jsonwebtoken = "8.1.0"
 bcrypt = "0.12.1"
 chrono = {varsion="0.4", features = ["serde"]}
 csrf = "0.4.1"
+itertools = "0.10.3"
 # csrf-token = { git = "ssh://git@github.com/3dom-co-jp/csrf-token.git", branch="v0.2.x" }

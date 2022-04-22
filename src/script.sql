@@ -1,0 +1,4 @@
+--insert into users (email, company, password, created_at) values('cy@mail.co.th', 'banpu', 'test', '1999-01-08 04:05:06');
+-- insert into products (name, stock, cost, user_id) values ('product 1', 10, 20, 2);
+-- insert into prices (name, user_id) values('prices', 2);
+-- insert into prices_products (price_id, product_id, user_id, amount) values(1,5,2,100)
